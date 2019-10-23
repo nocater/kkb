@@ -8,6 +8,8 @@
 
 ## Install nvidia-docker
 
+[nvidia-docker](https://github.com/NVIDIA/nvidia-docker)
+
 1. 禁用系统默认显卡驱动
 
    ``` bash
@@ -138,11 +140,11 @@
 
 ## Use Docker for DL
 
-## 创建数据卷
+### 创建数据卷
 
 [参考](https://docs.docker.com/engine/reference/commandline/volume_create/)
 
-需要区分下type的区别
+需要区分下type的区别 (不使用此方法，卷会默认于docker目录而不是想要的目录)
 
 ``` bash
 docker volume create -d local \
@@ -151,36 +153,97 @@ docker volume create -d local \
 chen_data
 ```
 
-## 运行image
+
+
+way2:
+
+首先使用账户`chen`创建所需要挂载的目录(即保证目录的owner为chen, docker自行创建的为root)
+
+然后直接使用 mount 参数进行挂载即可
+
+
+
+### 运行image
+
+使用[deepo](https://github.com/ufoym/deepo)
+
+
 
 ``` bash
-docker run -it \
---name chenshuai \
---mount source=chen_data,target=/data \
---ipc=host \
-ufoym/deepo:all-jupyter-py36
+docker run \
+ --name zhangnan \
+ --gpus all \
+ -it \
+ -d \
+ -p 9000:8888 \
+ --ipc=host \
+ --mount type=bind,source=/home/zhang/docker_env,target=/env \
+ ufoym/deepo:all-jupyter-py36
 ```
 
 
 
-## 查看所有container
+
+
+``` bash
+docker run \
+ --name chenshuai \
+ --gpus all \
+ -it \
+ -d \
+ -p 8888:8888 \
+ --ipc=host \
+ --mount type=bind,source=/home/chen/docker_env,target=/env \
+ ufoym/deepo:all-jupyter-py36
+```
+
+> gpus 表示使用所有GPU
+>
+> it 表示ternimal
+>
+> d 表示守护式启动
+>
+> p 表示端口映射
+>
+> -- mount 添加挂载
+
+### 查看所有container
 
 ``` bash
 docker container ls
 ```
 
-
-
-## 进入container
+### 进入container
 
 ``` bash
 docker exec -it <PID> bash
 ```
 
-## 删除未运行container
+### 删除未运行container
 
 ``` bash
 docker container prune -f
 ```
 
-> 未搞定自定义 `volume`
+
+
+## install docker-compose
+
+[参考](curl -L https://raw.githubusercontent.com/docker/compose/1.24.1/contrib/completion/bash/docker-compose > /etc/bash_completion.d/docker-compos)
+
+使用pip安装
+
+``` bash
+sudo pip install -U docker-compose
+```
+
+bash 补全命令
+
+``` bash
+curl -L https://raw.githubusercontent.com/docker/compose/1.24.1/contrib/completion/bash/docker-compose > /etc/bash_completion.d/docker-compose
+```
+
+
+
+## install docker-registry
+
