@@ -80,13 +80,8 @@
    >  ``` bash
    >  sudo dpkg --add-architecture i386
    >  sudo apt update
+   >  sudo apt install libc6:i386
    >  ```
-> sudo apt install libc6:i386
->
-> ```
-> 
-> ```
-
 3. 安装NVIDIA Container Toolkit
 
    [官网](https://github.com/NVIDIA/nvidia-docker),前提即完成Nvidia的驱动安装，不需要安装CUDA。
